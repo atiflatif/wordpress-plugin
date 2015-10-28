@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: EEXCESS
+ * Plugin Name: EEXCESS_withform
  * Plugin URI: https://github.com/EEXCESS/eexcess
  * Description: Gives you the ability to enrich your blog with well-selected and high quality content
  * Version: 0.3
@@ -53,9 +53,24 @@ limitations under the License.
          //for citeproc
          wp_enqueue_script( 'eexcess-citeproc', plugins_url( '/js/lib/citationBuilder.js', __FILE__ ));
          // init styles
-         wp_enqueue_style( 'eexcess-styles', plugins_url( '/styles/eexcess-styles.css', __FILE__ ) );
+         
+		 //Atif: Various style sheets included here for profile form option
+		 wp_enqueue_style( 'eexcess-styles', plugins_url( '/styles/eexcess-styles.css', __FILE__ ) );
          wp_enqueue_style( 'onOffSwitch', plugins_url( '/styles/toggle-switch.css', __FILE__ ) );
-      }
+      
+	  wp_enqueue_style( 'bootstrap', plugins_url( '/styles/bootstrap.css', __FILE__ ) );
+      wp_enqueue_style( 'bootstrap-theme', plugins_url( '/styles/bootstrap-theme.css', __FILE__ ) );
+      wp_enqueue_style( 'datepicker', plugins_url( '/styles/datepicker.css', __FILE__ ) );
+      wp_enqueue_style( 'jquery-ui', plugins_url( '/styles/jquery-ui.css', __FILE__ ) );
+      wp_enqueue_style( 'privacy', plugins_url( '/styles/privacy.css', __FILE__ ) );
+		wp_enqueue_style( 'jquery.tagit', plugins_url( '/styles/jquery.tagit.css', __FILE__ ) );
+
+	  
+	  
+	  
+	  
+	  
+	  }
    }
 
    add_action( 'add_meta_boxes', 'myplugin_add_meta_box' );
@@ -83,7 +98,7 @@ limitations under the License.
          <div id="recommendationList">
             <ul id="eexcess-recommendationList">
                {{#each result}}
-                  <li data-id="{{id}}">
+                  <li data-id="{{documentBadge.id}}">
                      <div>
                         {{#if previewImage}}
                            <div class="eexcess-previewPlaceholder">
@@ -95,21 +110,17 @@ limitations under the License.
                            <div class="eexcess-previewPlaceholder"></div>
                         {{/if}}
                         <div class="recommendationTextArea">
-                           <a target="_blank" href="{{uri}}">{{title}}</a>
-                           </br>
+                           <a target="_blank" href="{{documentBadge.uri}}">{{title}}</a>
                            {{#if creator}}
-                              Creator: {{creator}}
+                              <div class="creator">Creator: {{creator}}</div>
                            {{else}}
-                              Provider: {{facets.provider}}
+                              <div class="provider">Provider: {{documentBadge.provider}}</div>
                            {{/if}}
-                           <br/>
-                           {{#if facets.year}}
-                              Published: {{facets.year}}
+                           {{#if date}}
+                              <div class="published">Published: {{date}}</div>
                            {{else}}
-                              Language: {{facets.language}}
+                              <div class="language">Language: {{language}}</div>
                            {{/if}}
-
-                           <br/>
                            {{#if collectionName}}
                               <input type="hidden" name="collectionName" value="{{collectionName}}">
                            {{/if}}
@@ -120,13 +131,13 @@ limitations under the License.
                               <input type="hidden" name="description" value="{{description}}">
                            {{/if}}
                            {{#if eexcessURI}}
-                              <input type="hidden" name="eexcessURI" value="{{eexcessURI}}">
+                              <input type="hidden" name="eexcessURI" value="{{documentBadge.uri}}">
                            {{/if}}
                            {{#if facets.year}}
-                              <input type="hidden" name="facets.year" value="{{facets.year}}">
+                              <input type="hidden" name="facets.year" value="{{date}}">
                            {{/if}}
                            {{#if facets.language}}
-                              <input type="hidden" name="facets.language" value="{{facets.language}}">
+                              <input type="hidden" name="facets.language" value="{{language}}">
                            {{/if}}
                            {{#if id}}
                               <input type="hidden" name="id" value="{{id}}">
@@ -193,12 +204,142 @@ limitations under the License.
                      <label for="extendedLogging"></label>
                   </td>
                </tr>
-            </table>
+            		
+			</table>
             <!-- /tooglebutton-->
-         </div>
+         <!-- Atif: User profile panel -->
+		 <div class="panel panel-primary">
+			<div class="panel-heading" style="background-color: white;">
+				<h3 class="panel-title"> User Profile
+					<!--<span class="glyphicon glyphicon-user"></span> -->
+				</h3>
+			</div>
+			<div class="panel-body">
+	                    <!-- SOURCE SELECTION -->
+				<div class="row">
+	                        <!--     <div class="col-lg-12">
+	                                <div id="source_selection" class="panel panel-info">
+	                                    <div class="panel-heading">
+	                                        <h3 class="panel-title">Source selection</h3>
+	                                    </div>
+	                                 </div>
+	                            </div> -->
+					<div class="col-lg-8">
+						<!-- IDENTITY -->
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									Identity<span class="badge pull-right setting"></span>
+								</h3>
+							</div>
+							<div class="panel-body">
+								<div class="content">
+									<form class="form-income">
+										<div class="form-group">
+											<label for="" class="control-label">Name</label>
+											<div class="row">
+												<div class="col-lg-2">
+													<select  data-eexcess-profile-field="title" class="form-control">
+														<option value=""></option>
+														<option value="mr">Mr</option>
+														<option value="miss">Miss</option>
+														<option value="mrs">Mrs</option>
+														<option value="ms">Ms</option>
+													</select>
+												</div>
+												<div class="col-lg-5">
+													<input data-eexcess-profile-field="firstname" type="text" class="form-control"
+														placeholder="First name">
+												</div>
+												<div class="col-lg-5">
+													<input data-eexcess-profile-field="lastname" type="text" class="form-control"
+														placeholder="Last name">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="control-label">Address</label>
+											<div class="row">
+												<div class="col-lg-12">
+													<input data-eexcess-profile-field="address.line1" type="text" class="form-control" placeholder="Line 1">
+												</div>
+												<div class="col-lg-12">
+													<input data-eexcess-profile-field="address.line2" type="text" class="form-control" placeholder="Line 2">
+												</div>
+												<div class="col-lg-4">
+													<input data-eexcess-profile-field="address.zipcode" type="text" class="form-control" placeholder="Zip code">
+												</div>
+												<div class="col-lg-8">
+													<input data-eexcess-profile-field="address.city" type="text" class="form-control" placeholder="City">
+												</div>
+												<div class="col-lg-12">
+													<input data-eexcess-profile-field="address.country" type="text" class="form-control" placeholder="Country">
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<!-- /IDENTITY-->
+					</div>
+					<div class="col-lg-4">
+						<!-- DEMOGRAPHICS -->
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									Demographics <span class="badge pull-right setting"></span>
+								</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label for="" class="control-label">Gender</label>
+									<select data-eexcess-profile-field="gender" class="form-control">
+										<option value=""></option>
+										<option value="male">Male</option>
+										<option value="female">Female</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="" class="control-label">Birthdate</label>
+									<div class="input-group">
+										<!--<span class="input-group-addon"><span class="glyphicon glyphicon-calendar icon-calendar"></span></span>-->
+										<input data-eexcess-profile-field="birthdate" class="form-control datepicker" type="text" value="" data-date-format="yyyy-mm-dd" placeholder="Birthdate"></input>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /DEMOGRAPHICS-->
+					</div>
+					
+				<!--	<div class="col-lg-12">
+						<!-- TOPICS -->
+				<!--		<div id="topics" class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									Topics of interest <span class="badge pull-right setting"></span>
+								</h3>
+							</div>
+	<!--						<div class="panel-body">
+								<div class="form-group">
+									<input class="form-control" type="text" placeholder="New topic"></input>
+								</div>
+								<div class="label-container well well-lg">
+								</div>
+							</div>-->
+					<!--	<ul id="topicInput"></ul>
+						</div>
+						<!-- /TOPICS-->
+				<!--	</div> -->
+				</div>
+			</div>
+		</div>
+		 <!-- Atif: User profile panel ends here-->
+		 </div>
          <a href="#TB_inline?width=600&height=550&inlineId=privacyThickbox" title="Privacy Settings" class="thickbox">
             <input id="privacySettings"  style="width: 100px;" name="privacySettings" class="button button-small" value="Privacy Settings">
-         </a>
+         
+		 </a>
       </div>
       <!-- /privacy settings thickbox-->
    <?php }
@@ -208,10 +349,7 @@ limitations under the License.
 
    // Callback function for the Ajax call
    function get_recommendations() {
-      // Read the term form the POST variable
-      $items = $_POST['terms'];
-      $context = $_POST['trigger'];
-
+      $payload = $_POST['payload'];
       /**
        * URL: http://eexcess-dev.joanneum.at/eexcess-privacy-proxy/api/v1/recommend
        * Alternative URL: http://132.231.111.197:8080/eexcess-privacy-proxy/api/v1/recommend
@@ -219,38 +357,53 @@ limitations under the License.
        * DEV: http://eexcess-dev.joanneum.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/recommend
        * Privacy Proxy
        */
+      // new Format
+      $proxyURL = "http://eexcess-dev.joanneum.at/eexcess-privacy-proxy-1.0-SNAPSHOT/api/v1/recommend";
+
       //dev
       //$proxyURL = "http://eexcess-dev.joanneum.at/eexcess-privacy-proxy/api/v1/recommend";
 
       //stable
-      $proxyURL = "http://eexcess.joanneum.at/eexcess-privacy-proxy/api/v1/recommend";
-
-      // Data for the api call
-      $postData = array(
-         "numResults" => 100,
-         "contextKeywords" => array(),
-         "context" => array("reason" => $context, "value" => "")
-      );
-
-      // Creating the context list for the api call
-      foreach($items as $term) {
-         array_push($postData["contextKeywords"], array( "weight" => strval (1.0 / sizeof($items)), "text" => $term ));
-      }
+      // $proxyURL = "http://eexcess.joanneum.at/eexcess-privacy-proxy/api/v1/recommend";
 
       // Create context for the API call
       $context = stream_context_create(array(
          'http' => array(
             'method' => 'POST',
-            'header' => array("Content-Type: application/json", "Origin: WP"),
-            'content' => json_encode($postData)
+            'header' => array("Content-Type: application/json", "Accept: application/json", "Origin: WP"),
+            'content' => json_encode($payload)
          )
       ));
-
       // Send the request and return the result
       echo @file_get_contents($proxyURL, FALSE, $context);
 
 	   die(); // this is required to return a proper result
    }
+
+
+   // Ajax action handler
+   add_action( 'wp_ajax_get_details', 'get_details' );
+
+   // Callback function for the Ajax call
+   function get_details() {
+      $payload = $_POST['payload'];
+
+      $proxyURL = "http://eexcess-dev.joanneum.at/eexcess-privacy-proxy-1.0-SNAPSHOT/api/v1/getDetails";
+      
+      // Create context for the API call
+      $context = stream_context_create(array(
+         'http' => array(
+            'method' => 'POST',
+            'header' => array("Content-Type: application/json", "Accept: application/json", "Origin: WP"),
+            'content' => json_encode($payload)
+         )
+      ));
+      // Send the request and return the result
+      echo @file_get_contents($proxyURL, FALSE, $context);
+
+	   die(); // this is required to return a proper result
+   }
+
 
 ///////////advanced logging///////////////
 
@@ -274,8 +427,11 @@ function advanced_logging() {
     * DEV: http://eexcess-dev.joanneum.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/recommend
     * Privacy Proxy
     */
+   // new Format
+   $proxyURL = "http://eexcess-dev.joanneum.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/recommend";
+
    //dev
-   $proxyURL = "http://eexcess-dev.joanneum.at/eexcess-privacy-proxy/api/v1/log/rview";
+   //$proxyURL = "http://eexcess-dev.joanneum.at/eexcess-privacy-proxy/api/v1/log/rview";
 
    //stable
    //$proxyURL = "http://eexcess.joanneum.at/eexcess-privacy-proxy/api/v1/log/rview";
